@@ -41,10 +41,29 @@ class _MainScaffoldState extends State<MainScaffold> with SingleTickerProviderSt
     _rotationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
   }
 
-  void _handleUpload() {
+  // دالة تحاكي الذكاء الاصطناعي لتخمين السعر
+  Future<void> _simulateAIPricing() async {
+    // 1. الأنيميشن الدائري
     _rotationController.forward(from: 0.0);
+    
+    // 2. محاكاة فتح الكاميرا (كما فعلنا سابقاً)
+    print("فتح الكاميرا...");
+    await Future.delayed(Duration(seconds: 2)); // محاكاة التقاط الصورة
+    
+    // 3. تحليل الذكاء الاصطناعي (تخمين عشوائي بناءً على السوق)
+    var products = ["طقم ذهب عيار 21", "خاتم فضة يمني", "تويوتا لاندكروزر 2023", "فيلا في حدة"];
+    var estimatedPrices = ["1,200 \$", "35,000 RY", "98,000 \$", "550,000 \$"];
+    int randomIndex = math.Random().nextInt(products.length);
+    
+    String product = products[randomIndex];
+    String price = estimatedPrices[randomIndex];
+
+    // 4. عرض النتيجة للعميل
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("جاري فتح متصفح الرفع الذكي...", style: TextStyle(fontFamily: 'Cairo'))),
+      SnackBar(
+        content: Text("AI تخمين: تم تحليل المنتج [$product]. السعر المتوقع بناءً على السوق: [$price].", style: TextStyle(fontFamily: 'Cairo')),
+        backgroundColor: Colors.amber[900],
+      ),
     );
   }
 
@@ -54,7 +73,7 @@ class _MainScaffoldState extends State<MainScaffold> with SingleTickerProviderSt
       HomeScreen(),
       MapScreen(),
       StoreScreen(),
-      Center(child: Text("واجهة الرفع")), // زر المنتصف
+      Center(child: Text("جاري تحليل السعر...")), // زر المنتصف
       WalletScreen(),
       ChatScreen(),
       ProfileScreen(),
@@ -62,7 +81,7 @@ class _MainScaffoldState extends State<MainScaffold> with SingleTickerProviderSt
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("FLEX YEMEN", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+        title: Text("FLEX YEMEN AI PRO", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
         centerTitle: true,
         elevation: 0,
         actions: [IconButton(icon: Icon(Icons.notifications_none), onPressed: (){})],
@@ -74,8 +93,8 @@ class _MainScaffoldState extends State<MainScaffold> with SingleTickerProviderSt
           angle: _rotationController.value * 2 * math.pi,
           child: FloatingActionButton(
             backgroundColor: const Color(0xFFD4AF37),
-            onPressed: _handleUpload,
-            child: const Icon(Icons.add_rounded, color: Colors.black, size: 35),
+            onPressed: _simulateAIPricing, // تم ربط الذكاء الاصطناعي هنا
+            child: const Icon(Icons.psychology, color: Colors.black, size: 35), // أيقونة الذكاء
             elevation: 10,
           ),
         ),
