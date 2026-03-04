@@ -49,18 +49,18 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 1; // يفتح على المتجر مباشرة لمعاينة الأقسام
+  int _currentIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
-      HomeScreen(),             
+      const Center(child: Text("الرئيسية")),             
       StoreScreen(onAdd: widget.onAddToCart), 
-      const Center(child: Text("خريطة اليمن")), 
-      AddPostScreen(),          
+      const Center(child: Text("الخرائط")), 
+      const Center(child: Text("إضافة إعلان")),          
       const Center(child: Text("المحفظة")), 
       const Center(child: Text("الدردشة")), 
-      ProfilePage(onThemeToggle: widget.onThemeToggle, isDarkMode: widget.isDarkMode),            
+      const Center(child: Text("حسابي")),            
     ];
 
     return Scaffold(
@@ -74,13 +74,7 @@ class _MainNavigationState extends State<MainNavigation> {
         ],
       ),
       body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: _buildModernNav(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() => _currentIndex = 3),
-        backgroundColor: const Color(0xFFD4AF37),
-        child: const Icon(Icons.add_a_photo_rounded, color: Colors.black),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -92,115 +86,105 @@ class _MainNavigationState extends State<MainNavigation> {
     ],
   );
 
-  Widget _buildModernNav() => BottomAppBar(
-    color: widget.isDarkMode ? const Color(0xFF151515) : Colors.white,
-    shape: const CircularNotchedRectangle(),
-    notchMargin: 10,
-    child: Container(
-      height: 60,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _navItem(Icons.home_filled, "الرئيسية", 0),
-          _navItem(Icons.storefront_outlined, "المتجر", 1),
-          const SizedBox(width: 40),
-          _navItem(Icons.account_balance_wallet_outlined, "المحفظة", 4),
-          _navItem(Icons.person_outline, "حسابي", 6),
-        ],
-      ),
-    ),
-  );
-
-  Widget _navItem(IconData icon, String label, int index) => InkWell(
-    onTap: () => setState(() => _currentIndex = index),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(icon, color: _currentIndex == index ? const Color(0xFFD4AF37) : Colors.grey, size: 24),
-        Text(label, style: GoogleFonts.cairo(fontSize: 10, color: _currentIndex == index ? const Color(0xFFD4AF37) : Colors.grey)),
-      ]),
-    ),
+  Widget _buildBottomNav() => BottomNavigationBar(
+    currentIndex: _currentIndex > 1 ? 2 : _currentIndex,
+    onTap: (i) => setState(() => _currentIndex = i),
+    selectedItemColor: const Color(0xFFD4AF37),
+    unselectedItemColor: Colors.grey,
+    items: const [
+      BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسية"),
+      BottomNavigationBarItem(icon: Icon(Icons.store), label: "المتجر"),
+      BottomNavigationBarItem(icon: Icon(Icons.person), label: "حسابي"),
+    ],
   );
 }
 
-// 🏠 الصفحة الرئيسية (مختصرة للتركيز على المتجر)
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("الرئيسية"));
-}
-
-// 🛒 صفحة المتجر الكاملة (15 قسم + مجوهرات وفضيات)
 class StoreScreen extends StatelessWidget {
   final VoidCallback onAdd;
   StoreScreen({required this.onAdd});
 
-  final List<Map<String, dynamic>> allCategories = [
+  final List<Map<String, dynamic>> cats = [
     {"n": "مجوهرات", "i": Icons.diamond, "c": Colors.blueAccent},
-    {"n": "فضيات يمنية", "i": Icons.Brightness_7, "c": Colors.grey},
+    {"n": "فضيات يمنية", "i": Icons.auto_awesome, "c": Colors.grey},
     {"n": "سوبر ماركت", "i": Icons.shopping_basket, "c": Colors.green},
-    {"n": "مطاعم", "i": Icons.restaurant, "c": Colors.orange},
     {"n": "إلكترونيات", "i": Icons.laptop_mac, "c": Colors.blue},
-    {"n": "أزياء وملابس", "i": Icons.checkroom, "c": Colors.purple},
-    {"n": "عطور وبخور", "i": Icons.auto_awesome, "c": Colors.pinkAccent},
-    {"n": "ألعاب أطفال", "i": Icons.smart_toy, "c": Colors.red},
-    {"n": "تعهد حفلات", "i": Icons.celebration, "c": Colors.amber},
-    {"n": "أدوات منزلية", "i": Icons.kitchen, "c": Colors.teal},
-    {"n": "صحة وجمال", "i": Icons.face, "c": Colors.deepPurple},
-    {"n": "معدات بناء", "i": Icons.construction, "c": Colors.brown},
-    {"n": "مستلزمات طبية", "i": Icons.medication, "c": Colors.redAccent},
-    {"n": "كتب وقرطاسية", "i": Icons.menu_book, "c": Colors.indigo},
-    {"n": "عالم الرياضة", "i": Icons.fitness_center, "c": Colors.cyan},
-    {"n": "بذور وزراعة", "i": Icons.agriculture, "c": Colors.lightGreen},
-    {"n": "قسم التخفيضات", "i": Icons.loyalty, "c": Colors.orangeAccent},
   ];
 
   @override
   Widget build(BuildContext context) => GridView.builder(
-    padding: const EdgeInsets.all(12),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 3, 
-      mainAxisSpacing: 10, 
-      crossAxisSpacing: 10, 
-      childAspectRatio: 0.8
-    ),
-    itemCount: allCategories.length,
+    padding: const EdgeInsets.all(15),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1, crossAxisSpacing: 10, mainAxisSpacing: 10),
+    itemCount: cats.length,
     itemBuilder: (context, i) => InkWell(
-      onTap: onAdd,
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A), 
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white.withOpacity(0.05))
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: allCategories[i]['c'].withOpacity(0.1),
-                shape: BoxShape.circle
-              ),
-              child: Icon(allCategories[i]['i'], color: allCategories[i]['c'], size: 28),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              allCategories[i]['n'], 
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(fontSize: 10, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListScreen(category: cats[i]['n'], onAdd: onAdd))),
+      child: Card(
+        color: const Color(0xFF1A1A1A),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Icon(cats[i]['i'], color: cats[i]['c'], size: 40),
+          Text(cats[i]['n'], style: const TextStyle(fontWeight: FontWeight.bold)),
+        ]),
       ),
     ),
   );
 }
 
-// باقي الواجهات
-class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("رفع إعلان")); }
-class ProfilePage extends StatelessWidget {
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
-  ProfilePage({required this.onThemeToggle, required this.isDarkMode});
-  @override Widget build(BuildContext context) => const Center(child: Text("الحساب"));
+class ProductListScreen extends StatelessWidget {
+  final String category;
+  final VoidCallback onAdd;
+  ProductListScreen({required this.category, required this.onAdd});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("منتجات $category")),
+      body: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (context, i) => ListTile(
+          leading: const Icon(Icons.image, size: 50),
+          title: Text("$category - عينة رقم $i"),
+          subtitle: const Text("السعر: 15,000 RY"),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 15),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetailScreen(name: "$category - عينة رقم $i", onAdd: onAdd))),
+        ),
+      ),
+    );
+  }
+}
+
+class ProductDetailScreen extends StatelessWidget {
+  final String name;
+  final VoidCallback onAdd;
+  ProductDetailScreen({required this.name, required this.onAdd});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("تفاصيل المنتج")),
+      body: Column(children: [
+        Container(height: 250, width: double.infinity, color: Colors.grey[900], child: const Icon(Icons.image, size: 100)),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text("وصف المنتج: هذا المنتج عالي الجودة متوفر حصرياً في فلكس يمن بمواصفات عالمية.", style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 20),
+            const Text("السعر: 25,000 RY", style: TextStyle(fontSize: 20, color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)),
+              onPressed: onAdd, 
+              child: const Text("إضافة إلى السلة", style: TextStyle(color: Colors.black))
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              onPressed: () {}, 
+              icon: const Icon(Icons.chat), 
+              label: const Text("تواصل مع البائع عبر واتساب")
+            ),
+          ]),
+        )
+      ]),
+    );
+  }
 }
