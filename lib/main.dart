@@ -57,9 +57,9 @@ class _MainNavigationState extends State<MainNavigation> {
       HomeScreen(),             
       const Center(child: Text("خريطة اليمن الذكية")), 
       StoreScreen(onAdd: widget.onAddToCart), 
-      const Center(child: Text("إضافة إعلان جديد")),          
-      const Center(child: Text("المحفظة المالية")), 
-      const Center(child: Text("الدردشة والوساطة")), 
+      AddPostScreen(),          
+      WalletScreen(), 
+      ChatListScreen(), 
       ProfilePage(),            
     ];
 
@@ -71,7 +71,7 @@ class _MainNavigationState extends State<MainNavigation> {
           icon: const Icon(Icons.settings_outlined, color: Color(0xFFD4AF37)),
           onPressed: () => setState(() => _currentIndex = 6),
         ),
-        title: Text("FLEX YEMEN", style: GoogleFonts.cairo(color: const Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text("FLEX YEMEN", style: GoogleFonts.cairo(color: const Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           _buildCartBadge(),
@@ -131,104 +131,75 @@ class _MainNavigationState extends State<MainNavigation> {
   );
 }
 
-// --- 🏠 الواجهة الرئيسية المطورة (سيرش + سلايدر) ---
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(
     padding: const EdgeInsets.symmetric(vertical: 10),
     children: [
-      // 1. نظام البحث الذكي
+      // نظام البحث
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Container(
           decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-          child: TextField(
+          child: const TextField(
             decoration: InputDecoration(
               hintText: "ابحث عن عقار، سيارة، أو منتج...",
-              prefixIcon: const Icon(Icons.search, color: Color(0xFFD4AF37)),
-              suffixIcon: const Icon(Icons.tune, color: Color(0xFFD4AF37)), // زر الفلاتر
+              prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 15),
+              contentPadding: EdgeInsets.symmetric(vertical: 15),
             ),
           ),
         ),
       ),
-      const SizedBox(height: 20),
-
-      // 2. شريط الإعلانات المتحرك (Slider)
+      const SizedBox(height: 15),
+      
+      // شريط الإعلانات (تصحيح الرموز)
       SizedBox(
-        height: 180,
+        height: 160,
         child: PageView(
           children: [
-            _adSlide("عروض فلكس برايم", "خصم 30% على العقارات الموثقة", Colors.amber[900]!),
-            _adSlide("سيارات 2024", "وصلت حديثاً - معرض عدن الدولي", Colors.blueGrey[800]!),
-            _adSlide("سوبر ماركت فلكس", "توصيل مجاني لأول 5 طلبات", Colors.green[900]!),
+            _adSlide("عروض فلكس", "خصومات تصل إلى 50\%", Colors.amber[900]!),
+            _adSlide("سيارات 2024", "وصلت حديثاً إلى معارضنا", Colors.blueGrey[800]!),
           ],
         ),
       ),
-      const SizedBox(height: 20),
+      const SizedBox(height: 15),
 
-      // 3. تصنيفات سريعة
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Row(children: [
-          _quickAction(Icons.home, "عقارات"),
-          _quickAction(Icons.directions_car, "سيارات"),
-          _quickAction(Icons.phone_iphone, "جوالات"),
-          _quickAction(Icons.work, "وظائف"),
-          _quickAction(Icons.fastfood, "مطاعم"),
-        ]),
-      ),
-
-      // 4. المحتوى الحالي
-      Padding(
-        padding: const EdgeInsets.all(15),
-        child: Text("أحدث الإعلانات", style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
-      ),
-      _itemCard("فيلا فاخرة - صنعاء", "600,000 $", "حي حدة"),
-      _itemCard("لكزس 2023 - فل كامل", "45,000 $", "عدن - المنصورة"),
+      // المحتوى (تم تصحيح الـ $)
+      _itemCard("فيلا فاخرة - حي حدة", "650,000 \$", "صنعاء", Icons.home_work, Colors.blue),
+      _itemCard("تويوتا لاندكروزر 2024", "98,000 \$", "عدن", Icons.directions_car, Colors.red),
+      _itemCard("أرض استثمارية - المطار", "220,000 \$", "صنعاء", Icons.landscape, Colors.green),
     ],
   );
 
-  Widget _adSlide(String title, String sub, Color color) => Container(
+  Widget _adSlide(String t, String s, Color c) => Container(
     margin: const EdgeInsets.symmetric(horizontal: 15),
-    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20), gradient: LinearGradient(colors: [color, color.withOpacity(0.6)])),
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-        Text(sub, style: const TextStyle(fontSize: 14, color: Colors.white70)),
-        const SizedBox(height: 10),
-        ElevatedButton(onPressed: () {}, child: const Text("استعرض الآن"))
-      ]),
-    ),
+    decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(15)),
+    child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(t, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+      Text(s, style: const TextStyle(color: Colors.white70)),
+    ])),
   );
 
-  Widget _quickAction(IconData i, String n) => Padding(
-    padding: const EdgeInsets.only(right: 20),
-    child: Column(children: [
-      CircleAvatar(radius: 28, backgroundColor: const Color(0xFF1A1A1A), child: Icon(i, color: const Color(0xFFD4AF37))),
-      const SizedBox(height: 5),
-      Text(n, style: const TextStyle(fontSize: 10)),
-    ]),
-  );
-
-  Widget _itemCard(String t, String p, String l) => Card(
+  Widget _itemCard(String t, String p, String l, IconData i, Color c) => Card(
     margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
     color: const Color(0xFF1A1A1A),
-    child: ListTile(title: Text(t), subtitle: Text(l), trailing: Text(p, style: const TextStyle(color: Color(0xFFD4AF37)))),
+    child: ListTile(
+      leading: Icon(i, color: c),
+      title: Text(t),
+      subtitle: Text(l),
+      trailing: Text(p, style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+    ),
   );
 }
 
-// (نحافظ على باقي الواجهات StoreScreen, ProfilePage كما هي لضمان استقرار التطبيق)
+// الصفحات الفرعية فارغة للاختصار وضمان استقرار الكود
 class StoreScreen extends StatelessWidget {
   final VoidCallback onAdd;
   StoreScreen({required this.onAdd});
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("واجهة المتجر"));
+  @override Widget build(BuildContext context) => const Center(child: Text("المتجر"));
 }
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("الملف الشخصي"));
-}
+class WalletScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("المحفظة")); }
+class ChatListScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("الدردشة")); }
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("إضافة إعلان")); }
+class ProfilePage extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("حسابي")); }
