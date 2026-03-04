@@ -5,7 +5,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        // نظام البحث الاحترافي
         Padding(
           padding: const EdgeInsets.all(15),
           child: Container(
@@ -24,7 +23,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-        // السلايدر (Carousel)
         Container(
           height: 160,
           margin: const EdgeInsets.symmetric(horizontal: 15),
@@ -47,7 +45,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 20),
         _buildSectionTitle("العروض المميزة اليوم"),
         _buildQuickItem("خاتم فضة يمني ملكي", "35,000 RY"),
-        _buildQuickItem("شقة للبيع - حي حدة", "120,000 $"),
+        _buildQuickItem("شقة للبيع - حي حدة", "120,000 \$"),
       ],
     );
   }
