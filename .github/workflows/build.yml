@@ -2,8 +2,6 @@ name: Build Flex Yemen APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -22,7 +20,10 @@ jobs:
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
-          
+
+      - name: Fix Missing Android Files
+        run: flutter create . --platforms android
+
       - name: Install dependencies
         run: flutter pub get
 
