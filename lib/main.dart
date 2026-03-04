@@ -49,17 +49,17 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 0;
+  int _currentIndex = 1; // يفتح على المتجر مباشرة لمعاينة الأقسام
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       HomeScreen(),             
-      const Center(child: Text("خريطة اليمن الذكية - قيد التطوير")), 
       StoreScreen(onAdd: widget.onAddToCart), 
+      const Center(child: Text("خريطة اليمن")), 
       AddPostScreen(),          
-      const Center(child: Text("المحفظة المالية")), 
-      const Center(child: Text("الدردشة والوساطة")), 
+      const Center(child: Text("المحفظة")), 
+      const Center(child: Text("الدردشة")), 
       ProfilePage(onThemeToggle: widget.onThemeToggle, isDarkMode: widget.isDarkMode),            
     ];
 
@@ -102,7 +102,7 @@ class _MainNavigationState extends State<MainNavigation> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _navItem(Icons.home_filled, "الرئيسية", 0),
-          _navItem(Icons.storefront_outlined, "المتجر", 2),
+          _navItem(Icons.storefront_outlined, "المتجر", 1),
           const SizedBox(width: 40),
           _navItem(Icons.account_balance_wallet_outlined, "المحفظة", 4),
           _navItem(Icons.person_outline, "حسابي", 6),
@@ -123,150 +123,84 @@ class _MainNavigationState extends State<MainNavigation> {
   );
 }
 
-// 🏠 الصفحة الرئيسية
+// 🏠 الصفحة الرئيسية (مختصرة للتركيز على المتجر)
 class HomeScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => ListView(
-    children: [
-      _buildSearchBar(),
-      _buildPromoSlider(),
-      _buildSectionTitle("الفئات المميزة"),
-      _buildCategories(),
-      _buildSectionTitle("أحدث العروض في اليمن"),
-      _buildItemCard("فيلا في حدة", "700,000 \$", "صنعاء", Icons.home),
-      _buildItemCard("مارسيدس G-Class", "120,000 \$", "عدن", Icons.directions_car),
-    ],
-  );
-
-  Widget _buildSearchBar() => Padding(
-    padding: const EdgeInsets.all(15),
-    child: Container(
-      decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(12)),
-      child: const TextField(
-        decoration: InputDecoration(hintText: "ابحث عن كل ما تحتاجه...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), border: InputBorder.none),
-      ),
-    ),
-  );
-
-  Widget _buildPromoSlider() => Container(
-    height: 150,
-    margin: const EdgeInsets.symmetric(horizontal: 15),
-    decoration: BoxDecoration(color: Colors.amber[900], borderRadius: BorderRadius.circular(15)),
-    child: const Center(child: Text("عروض الصيف في فلكس يمن\nخصومات العقارات 20\%", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold))),
-  );
-
-  Widget _buildSectionTitle(String title) => Padding(
-    padding: const EdgeInsets.all(15),
-    child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-  );
-
-  Widget _buildCategories() => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      _catIcon(Icons.home, "عقارات"),
-      _catIcon(Icons.car_rental, "سيارات"),
-      _catIcon(Icons.phone_android, "جوالات"),
-      _catIcon(Icons.work, "وظائف"),
-    ],
-  );
-
-  Widget _catIcon(IconData i, String n) => Column(children: [CircleAvatar(backgroundColor: Colors.white10, child: Icon(i, color: const Color(0xFFD4AF37))), Text(n, style: const TextStyle(fontSize: 12))]);
-
-  Widget _buildItemCard(String t, String p, String l, IconData i) => Card(
-    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-    color: const Color(0xFF1A1A1A),
-    child: ListTile(leading: Icon(i, color: const Color(0xFFD4AF37)), title: Text(t), subtitle: Text(l), trailing: Text(p, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
-  );
+  Widget build(BuildContext context) => const Center(child: Text("الرئيسية"));
 }
 
-// 🛒 صفحة المتجر (أقسام المتجر)
+// 🛒 صفحة المتجر الكاملة (15 قسم + مجوهرات وفضيات)
 class StoreScreen extends StatelessWidget {
   final VoidCallback onAdd;
   StoreScreen({required this.onAdd});
-  @override
-  Widget build(BuildContext context) => GridView.count(
-    crossAxisCount: 2,
-    padding: const EdgeInsets.all(15),
-    children: [
-      _storeCategory("أدوات منزلية", Icons.kitchen, Colors.orange),
-      _storeCategory("ملابس وأزياء", Icons.checkroom, Colors.purple),
-      _storeCategory("إلكترونيات", Icons.laptop, Colors.blue),
-      _storeCategory("عطور وبخور", Icons.opacity, Colors.pink),
-    ],
-  );
 
-  Widget _storeCategory(String n, IconData i, Color c) => Card(
-    color: const Color(0xFF1A1A1A),
-    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Icon(i, size: 40, color: c),
-      const SizedBox(height: 10),
-      Text(n, style: const TextStyle(fontWeight: FontWeight.bold)),
-      ElevatedButton(onPressed: onAdd, style: ElevatedButton.styleFrom(backgroundColor: c), child: const Text("تسوق")),
-    ]),
+  final List<Map<String, dynamic>> allCategories = [
+    {"n": "مجوهرات", "i": Icons.diamond, "c": Colors.blueAccent},
+    {"n": "فضيات يمنية", "i": Icons.Brightness_7, "c": Colors.grey},
+    {"n": "سوبر ماركت", "i": Icons.shopping_basket, "c": Colors.green},
+    {"n": "مطاعم", "i": Icons.restaurant, "c": Colors.orange},
+    {"n": "إلكترونيات", "i": Icons.laptop_mac, "c": Colors.blue},
+    {"n": "أزياء وملابس", "i": Icons.checkroom, "c": Colors.purple},
+    {"n": "عطور وبخور", "i": Icons.auto_awesome, "c": Colors.pinkAccent},
+    {"n": "ألعاب أطفال", "i": Icons.smart_toy, "c": Colors.red},
+    {"n": "تعهد حفلات", "i": Icons.celebration, "c": Colors.amber},
+    {"n": "أدوات منزلية", "i": Icons.kitchen, "c": Colors.teal},
+    {"n": "صحة وجمال", "i": Icons.face, "c": Colors.deepPurple},
+    {"n": "معدات بناء", "i": Icons.construction, "c": Colors.brown},
+    {"n": "مستلزمات طبية", "i": Icons.medication, "c": Colors.redAccent},
+    {"n": "كتب وقرطاسية", "i": Icons.menu_book, "c": Colors.indigo},
+    {"n": "عالم الرياضة", "i": Icons.fitness_center, "c": Colors.cyan},
+    {"n": "بذور وزراعة", "i": Icons.agriculture, "c": Colors.lightGreen},
+    {"n": "قسم التخفيضات", "i": Icons.loyalty, "c": Colors.orangeAccent},
+  ];
+
+  @override
+  Widget build(BuildContext context) => GridView.builder(
+    padding: const EdgeInsets.all(12),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3, 
+      mainAxisSpacing: 10, 
+      crossAxisSpacing: 10, 
+      childAspectRatio: 0.8
+    ),
+    itemCount: allCategories.length,
+    itemBuilder: (context, i) => InkWell(
+      onTap: onAdd,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A), 
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white.withOpacity(0.05))
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: allCategories[i]['c'].withOpacity(0.1),
+                shape: BoxShape.circle
+              ),
+              child: Icon(allCategories[i]['i'], color: allCategories[i]['c'], size: 28),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              allCategories[i]['n'], 
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
 
-// 📤 صفحة الرفع (إضافة إعلان من الهاتف)
-class AddPostScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(20),
-    child: Column(children: [
-      const Icon(Icons.cloud_upload_outlined, size: 80, color: Color(0xFFD4AF37)),
-      const Text("أضف إعلانك الآن واصل لكل اليمن", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      const SizedBox(height: 20),
-      const TextField(decoration: InputDecoration(labelText: "عنوان الإعلان", border: OutlineInputBorder())),
-      const SizedBox(height: 10),
-      const TextField(decoration: InputDecoration(labelText: "السعر بالدولار أو الريال", border: OutlineInputBorder())),
-      const SizedBox(height: 10),
-      ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.camera_alt), label: const Text("اختيار صور من الهاتف"), style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50))),
-      const Spacer(),
-      ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)), child: const Text("نشر الإعلان", style: TextStyle(color: Colors.black))),
-    ]),
-  );
-}
-
-// 👤 صفحة الحساب والإعدادات
+// باقي الواجهات
+class AddPostScreen extends StatelessWidget { @override Widget build(BuildContext context) => const Center(child: Text("رفع إعلان")); }
 class ProfilePage extends StatelessWidget {
   final VoidCallback onThemeToggle;
   final bool isDarkMode;
   ProfilePage({required this.onThemeToggle, required this.isDarkMode});
-
-  @override
-  Widget build(BuildContext context) => ListView(
-    children: [
-      const UserHeader(),
-      const Divider(),
-      _settingsItem("إعلاناتي", Icons.list_alt, () {}),
-      _settingsItem("المفضلة", Icons.favorite_border, () {}),
-      _settingsItem("توثيق الحساب", Icons.verified_user_outlined, () {}),
-      _settingsItem("اللغة (العربية)", Icons.language, () {}),
-      SwitchListTile(title: const Text("الوضع الليلي"), secondary: const Icon(Icons.dark_mode), value: isDarkMode, onChanged: (v) => onThemeToggle()),
-      _settingsItem("اتصل بنا", Icons.support_agent, () {}),
-      _settingsItem("تسجيل الخروج", Icons.logout, () {}, color: Colors.red),
-    ],
-  );
-
-  Widget _settingsItem(String t, IconData i, VoidCallback o, {Color color = Colors.white}) => ListTile(
-    leading: Icon(i, color: color == Colors.red ? color : const Color(0xFFD4AF37)),
-    title: Text(t, style: TextStyle(color: color)),
-    trailing: const Icon(Icons.arrow_forward_ios, size: 15),
-    onTap: o,
-  );
-}
-
-class UserHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(20),
-    child: Row(children: [
-      const CircleAvatar(radius: 40, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 50, color: Colors.black)),
-      const SizedBox(width: 20),
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text("المستخدم اليمني", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const Text("صنعاء، اليمن", style: TextStyle(color: Colors.grey)),
-        Container(padding: const EdgeInsets.all(5), decoration: BoxDecoration(color: Colors.amber.withOpacity(0.2), borderRadius: BorderRadius.circular(5)), child: const Text("عضو بريميوم", style: TextStyle(color: Colors.amber, fontSize: 10))),
-      ]),
-    ]),
-  );
+  @override Widget build(BuildContext context) => const Center(child: Text("الحساب"));
 }
