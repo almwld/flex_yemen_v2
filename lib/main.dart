@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
 import 'screens/store_screen.dart';
 import 'screens/wallet_screen.dart';
+import 'screens/chat_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/profile_screen.dart';
 import 'widgets/ai_bot_widget.dart';
 
 void main() => runApp(FlexYemenApp());
@@ -12,7 +16,11 @@ class FlexYemenApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark, primaryColor: const Color(0xFFD4AF37)),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: const Color(0xFFD4AF37),
+        textTheme: GoogleFonts.cairoTextTheme(ThemeData.dark().textTheme),
+      ),
       home: MainScaffold(),
     );
   }
@@ -30,66 +38,82 @@ class _MainScaffoldState extends State<MainScaffold> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
+    _rotationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
   }
 
-  void _onUploadPressed() {
+  void _handleUpload() {
     _rotationController.forward(from: 0.0);
-    // منطق الرفع هنا
-    print("فتح متصفح الرفع...");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("جاري فتح متصفح الرفع الذكي...", style: TextStyle(fontFamily: 'Cairo'))),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       HomeScreen(),
-      const Center(child: Text("الخرائط")),
+      MapScreen(),
       StoreScreen(),
-      const Center(child: Text("صفحة الرفع")), // صفحة وسيطة
+      Center(child: Text("واجهة الرفع")), // زر المنتصف
       WalletScreen(),
-      const Center(child: Text("الدردشة")),
-      const Center(child: Text("حسابي")),
+      ChatScreen(),
+      ProfileScreen(),
     ];
 
     return Scaffold(
-      body: _pages[_currentIndex],
+      appBar: AppBar(
+        title: Text("FLEX YEMEN", style: GoogleFonts.cairo(fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+        centerTitle: true,
+        elevation: 0,
+        actions: [IconButton(icon: Icon(Icons.notifications_none), onPressed: (){})],
+      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       floatingActionButton: AnimatedBuilder(
         animation: _rotationController,
         builder: (context, child) => Transform.rotate(
           angle: _rotationController.value * 2 * math.pi,
           child: FloatingActionButton(
             backgroundColor: const Color(0xFFD4AF37),
-            onPressed: _onUploadPressed,
-            child: const Icon(Icons.add_circle_outline, color: Colors.black, size: 30),
+            onPressed: _handleUpload,
+            child: const Icon(Icons.add_rounded, color: Colors.black, size: 35),
+            elevation: 10,
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        clipBehavior: Clip.antiAlias,
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFFD4AF37),
-          unselectedItemColor: Colors.grey,
-          selectedFontSize: 10,
-          unselectedFontSize: 10,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسية"),
-            BottomNavigationBarItem(icon: Icon(Icons.map), label: "خرائط"),
-            BottomNavigationBarItem(icon: Icon(Icons.store), label: "المتجر"),
-            BottomNavigationBarItem(icon: Icon(Icons.upload_file, color: Colors.transparent), label: "رفع"), // مكان الزر العائم
-            BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "محفظة"),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: "دردشة"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "حسابي"),
-          ],
+        notchMargin: 10,
+        color: Color(0xFF1A1A1A),
+        child: Container(
+          height: 70,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _navBtn(Icons.home_filled, "الرئيسية", 0),
+              _navBtn(Icons.location_on, "الخرائط", 1),
+              _navBtn(Icons.storefront, "المتجر", 2),
+              SizedBox(width: 40), // مساحة للزر العائم
+              _navBtn(Icons.wallet, "المحفظة", 4),
+              _navBtn(Icons.forum, "دردشة", 5),
+              _navBtn(Icons.person, "حسابي", 6),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _navBtn(IconData icon, String label, int index) {
+    bool isSelected = _currentIndex == index;
+    return InkWell(
+      onTap: () => setState(() => _currentIndex = index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: isSelected ? Color(0xFFD4AF37) : Colors.grey, size: 26),
+          Text(label, style: TextStyle(color: isSelected ? Color(0xFFD4AF37) : Colors.grey, fontSize: 9)),
+        ],
       ),
     );
   }
