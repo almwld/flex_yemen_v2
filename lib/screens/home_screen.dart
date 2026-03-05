@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         physics: BouncingScrollPhysics(),
         children: AnimationConfiguration.toStaggeredList(
+            BusinessStories(),
           duration: const Duration(milliseconds: 800),
           childAnimationBuilder: (widget) => SlideAnimation(
             verticalOffset: 50.0,
