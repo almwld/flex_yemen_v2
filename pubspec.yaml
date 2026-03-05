@@ -1,61 +1,21 @@
-name: flex_yemen_v2
-description: Flex Yemen - التطبيق اليمني العصري
-
+name: flex_yemen
+description: A new Flutter project for Flex Yemen.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.4.0   # ← هذا هو الحل المباشر للخطأ
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.10+1
-  flutter_map: ^8.2.2
-  latlong2: ^0.9.1
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
-  fonts:
-    - family: Cairo
-      fonts:
-        - asset: assets/fonts/Cairo-Regular.ttf
-EOFmkdir -p .github/workflows
-
-cat << 'EOF' > .github/workflows/build-apk.yml
-name: Build Flex Yemen APK
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flex-yemen-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
