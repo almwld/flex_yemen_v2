@@ -4,30 +4,13 @@ class BusinessStories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 90,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 8,
+        itemCount: 5,
         itemBuilder: (context, i) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(colors: [Color(0xFFD4AF37), Colors.orange]),
-                ),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.storefront, color: Color(0xFFD4AF37)),
-                ),
-              ),
-              SizedBox(height: 5),
-              Text("تاجر $i", style: TextStyle(fontSize: 10, color: Colors.white70)),
-            ],
-          ),
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(radius: 30, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.store)),
         ),
       ),
     );
