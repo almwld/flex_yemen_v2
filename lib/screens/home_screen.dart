@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FadeInAnimation(child: widget),
           ),
           children: [
-            _buildSearch(),
+            _buildAdvancedHeader(),
             
             // إذا لم يتصل بعد، اعرض سلايدر "انتظار" احترافي
             !isConnected ? _buildSkeletonSlider() : _buildRealSlider(),
@@ -129,7 +129,33 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   // المكونات الثابتة
-  Widget _buildSearch() => Padding(padding: EdgeInsets.all(16), child: TextField(decoration: InputDecoration(hintText: "ابحث في Flex Yemen...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none))));
+  Widget _buildAdvancedHeader() => Padding(padding: EdgeInsets.all(16), child: TextField(decoration: InputDecoration(hintText: "ابحث في Flex Yemen...", prefixIcon: Icon(Icons.search, color: Color(0xFFD4AF37)), filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none))));
   Widget _buildSectionTitle(String t) => Padding(padding: EdgeInsets.all(16), child: Text(t, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
   Widget _buildAnimatedGrid() => Container(height: 80, child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [Icon(Icons.restaurant), Icon(Icons.diamond), Icon(Icons.videogame_asset), Icon(Icons.hotel)]));
 }
+
+  Widget _buildAdvancedHeader() => Column(
+    children: [
+      LiveNewsTicker(), // الشريط الإخباري الجديد
+      Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Row(
+          children: [
+            Expanded(child: GlassSearchBar()), // البحث الزجاجي
+            SizedBox(width: 10),
+            _buildSyncIndicator(), // مؤشر السحابة
+          ],
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildSyncIndicator() => Container(
+    padding: EdgeInsets.all(8),
+    decoration: BoxDecoration(color: isConnected ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1), shape: BoxShape.circle),
+    child: Icon(
+      isConnected ? Icons.cloud_done : Icons.cloud_sync,
+      color: isConnected ? Colors.green : Colors.orange,
+      size: 20,
+    ),
+  );
