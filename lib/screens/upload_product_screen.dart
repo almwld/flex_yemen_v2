@@ -6,59 +6,26 @@ class UploadProductScreen extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("إضافة منتج جديد 💎", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+          const Text("رفع إعلان جديد 📸", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
           const SizedBox(height: 20),
-          // زر اختيار الصور من الاستوديو
-          InkWell(
-            onTap: () => print("فتح الاستوديو"),
-            child: Container(
-              height: 150, width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFD4AF37), style: BorderStyle.none),
-                color: Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_photo_alternate_outlined, size: 50, color: Color(0xFFD4AF37)),
-                  Text("اضغط لاختيار صور المنتج من الاستوديو", style: TextStyle(fontSize: 12)),
-                ],
-              ),
-            ),
+          Container(
+            height: 180, width: double.infinity,
+            decoration: BoxDecoration(color: Colors.grey.withOpacity(0.1), borderRadius: BorderRadius.circular(15), border: Border.all(color: const Color(0xFFD4AF37))),
+            child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.cloud_upload_outlined, size: 50, color: Color(0xFFD4AF37)), Text("اضغط هنا لاختيار صور من الاستوديو")]),
           ),
           const SizedBox(height: 20),
-          _inputField("اسم المنتج", Icons.edit),
-          _inputField("السعر (ريال يمني)", Icons.money),
-          _inputField("وصف المنتج", Icons.description, maxLines: 3),
-          const SizedBox(height: 30),
-          SizedBox(
-            width: double.infinity,
-            height: 55,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)),
-              onPressed: () {},
-              child: const Text("نشر الإعلان الآن", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-          ),
+          _field("اسم المنتج"),
+          _field("السعر"),
+          _field("الوصف", lines: 3),
+          const SizedBox(height: 20),
+          ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)), child: const Text("نشر الآن", style: TextStyle(color: Colors.black))),
         ],
       ),
     );
   }
-
-  Widget _inputField(String label, IconData icon, {int maxLines = 1}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: TextField(
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, color: const Color(0xFFD4AF37)),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    );
-  }
+  Widget _field(String label, {int lines = 1}) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: TextField(maxLines: lines, decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)))),
+  );
 }
