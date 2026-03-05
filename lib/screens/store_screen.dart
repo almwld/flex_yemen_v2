@@ -1,140 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class StoreScreen extends StatefulWidget {
   @override
   _StoreScreenState createState() => _StoreScreenState();
 }
 
-class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  // تعريف الأقسام الرئيسية للمتجر
-  final List<Map<String, dynamic>> storeTabs = [
-    {"n": "المطاعم", "i": Icons.restaurant},
-    {"n": "الذهب", "i": Icons.diamond},
-    {"n": "ألعاب", "i": Icons.videogame_asset},
-    {"n": "الفنادق", "i": Icons.hotel},
-    {"n": "أزياء", "i": Icons.checkroom},
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: storeTabs.length, vsync: this);
-  }
+class _StoreScreenState extends State<StoreScreen> {
+  final List<String> categories = ["الكل", "ذهب عيار 21", "سيارات", "عقارات", "إلكترونيات"];
+  int selectedCat = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 1. شريط التبويبات العلوي (ثابت)
-        TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorColor: Color(0xFFD4AF37),
-          labelColor: Color(0xFFD4AF37),
-          unselectedLabelColor: Colors.grey,
-          tabs: storeTabs.map((tab) => Tab(
-            icon: Icon(tab['i'], size: 20),
-            text: tab['n'],
-          )).toList(),
-        ),
-
-        // 2. محتوى المتجر المتغير بناءً على التبويب
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildFoodSection(),    // قسم المطاعم
-              _buildGoldSection(),    // قسم الذهب
-              _buildGamingSection(),  // قسم الألعاب
-              _buildHotelSection(),   // قسم الفنادق
-              _buildFashionSection(), // قسم الأزياء
-            ],
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          _buildFilterBar(), // بار الأقسام العلوي
+          Expanded(
+            child: AnimationLimiter(
+              child: GridView.builder(
+                padding: EdgeInsets.all(15),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.7,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
+                ),
+                itemCount: 10, // عدد تجريبي للمنتجات
+                itemBuilder: (context, index) => _buildAnimatedProductCard(index),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  // --- بناء الأقسام (بيانات حقيقية لكل نوع) ---
-
-  Widget _buildFoodSection() => ListView(
-    padding: EdgeInsets.all(15),
-    children: [
-      _storeCard("مطعم شيباني", "أشهى المأكولات اليمنية", "4.8", "https://via.placeholder.com/100", "مفتوح"),
-      _storeCard("بيتزا هت - صنعاء", "عرض الغداء: بيتزا وسط + كولا", "4.5", "https://via.placeholder.com/100", "مزدحم"),
-    ],
-  );
-
-  Widget _buildGoldSection() => GridView.builder(
-    padding: EdgeInsets.all(15),
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.75, mainAxisSpacing: 10, crossAxisSpacing: 10),
-    itemCount: 4,
-    itemBuilder: (context, i) => _productCard("طقم ذهب عيار 21", "2,500,000 RY", "مجوهرات اليافعي"),
-  );
-
-  Widget _buildGamingSection() => ListView(
-    padding: EdgeInsets.all(15),
-    children: [
-      _gameChargeTile("660 UC - PUBG Mobile", "12.5 USD", Icons.bolt),
-      _gameChargeTile("1000 Diamond - Free Fire", "9.0 USD", Icons.local_fire_department),
-    ],
-  );
-
-  Widget _buildHotelSection() => ListView(
-    padding: EdgeInsets.all(15),
-    children: [
-      _storeCard("فندق موفنبيك", "جناح ملكي - إطلالة جبلية", "4.9", "https://via.placeholder.com/100", "متوفر"),
-    ],
-  );
-
-  Widget _buildFashionSection() => Center(child: Text("قسم الأزياء قيد التحديث..."));
-
-  // --- المكونات المشتركة ---
-
-  Widget _storeCard(String name, String desc, String rate, String img, String status) => Card(
-    margin: EdgeInsets.only(bottom: 15),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: ListTile(
-      leading: Container(width: 60, height: 60, decoration: BoxDecoration(color: Colors.grey[900], borderRadius: BorderRadius.circular(10))),
-      title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(desc, style: TextStyle(fontSize: 12)),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.star, color: Colors.amber, size: 15), Text(rate)]),
-          Text(status, style: TextStyle(color: Colors.green, fontSize: 10)),
-        ],
+  // بار الفلترة الأفقي
+  Widget _buildFilterBar() => Container(
+    height: 60,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: categories.length,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      itemBuilder: (context, i) => GestureDetector(
+        onTap: () => setState(() => selectedCat = i),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: selectedCat == i ? Color(0xFFD4AF37) : Colors.white10,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Center(
+            child: Text(categories[i], 
+              style: TextStyle(color: selectedCat == i ? Colors.black : Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+          ),
+        ),
       ),
     ),
   );
 
-  Widget _productCard(String name, String price, String store) => Container(
-    decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(15)),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: Container(decoration: BoxDecoration(color: Colors.grey[800], borderRadius: BorderRadius.vertical(top: Radius.circular(15))))),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), maxLines: 1),
-              Text(price, style: TextStyle(color: Color(0xFFD4AF37), fontSize: 11)),
-              Text(store, style: TextStyle(color: Colors.grey, fontSize: 9)),
-            ],
+  // كرت المنتج مع الأنيميشن
+  Widget _buildAnimatedProductCard(int index) {
+    return AnimationConfiguration.staggeredGrid(
+      position: index,
+      duration: const Duration(milliseconds: 500),
+      columnCount: 2,
+      child: ScaleAnimation(
+        child: FadeInAnimation(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    ),
+                    child: Center(child: Icon(Icons.image, color: Color(0xFFD4AF37), size: 40)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("طقم ملكي - عيار 21", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 5),
+                      Text("صنعاء - بيت بوس", style: TextStyle(color: Colors.grey, fontSize: 10)),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("2,450,000", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 14)),
+                          Text("RY", style: TextStyle(color: Color(0xFFD4AF37), fontSize: 10)),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-        )
-      ],
-    ),
-  );
-
-  Widget _gameChargeTile(String name, String price, IconData icon) => ListTile(
-    leading: CircleAvatar(backgroundColor: Colors.indigo, child: Icon(icon, color: Colors.white)),
-    title: Text(name),
-    subtitle: Text("شحن فوري برقم الآيدي"),
-    trailing: Text(price, style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-  );
+        ),
+      ),
+    );
+  }
 }

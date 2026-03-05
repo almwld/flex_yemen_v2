@@ -28,7 +28,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
       home: Scaffold(
-        body: IndexedStack(index: _currentIndex, children: [HomeScreen(), Center(child: Text("المتجر")), Center(child: Text("الإعدادات"))]),
+        body: IndexedStack(index: _currentIndex, children: [HomeScreen(), StoreScreen(), Center(child: Text("الإعدادات"))]),
         bottomNavigationBar: FlexBottomNav(currentIndex: _currentIndex, onTap: (i) => setState(() => _currentIndex = i)),
       ),
     );
