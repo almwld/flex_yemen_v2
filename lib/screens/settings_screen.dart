@@ -7,110 +7,116 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool isNotificationEnabled = true;
-  String selectedCurrency = "RY"; // ريال يمني
   final supabase = Supabase.instance.client;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildProfileHeader(),
-            const SizedBox(height: 20),
-            
-            _buildSectionHeader("تفضيلات النظام"),
-            _buildSettingTile(Icons.language, "اللغة", "العربية"),
-            _buildSettingTile(Icons.payments_outlined, "العملة الافتراضية", selectedCurrency, onTap: _showCurrencyPicker),
-            _buildSwitchTile(Icons.notifications_active_outlined, "التنبيهات الحية", isNotificationEnabled, (v) => setState(() => isNotificationEnabled = v)),
-            
-            _buildSectionHeader("الأمان والتوثيق"),
-            _buildSettingTile(Icons.verified_user_outlined, "توثيق الحساب (KYC)", "لم يتم التوثيق", color: Colors.orange),
-            _buildSettingTile(Icons.lock_outline, "تغيير كلمة المرور", ""),
-            _buildSettingTile(Icons.fingerprint, "قفل التطبيق بالبصمة", "مفعل"),
+      appBar: AppBar(title: Text("مركز التحكم والأمان"), centerTitle: true, backgroundColor: Colors.transparent, elevation: 0),
+      body: ListView(
+        padding: EdgeInsets.all(15),
+        children: [
+          _buildUserCard(),
+          SizedBox(height: 20),
+          
+          _buildCategoryTitle("التحقق من الهوية (KYC)"),
+          _buildActionCard(Icons.badge_outlined, "توثيق الحساب", "ارفع هويتك لزيادة سقف العمليات", Colors.orange, () => _showKYCDialog()),
 
-            _buildSectionHeader("الدعم والمعلومات"),
-            _buildSettingTile(Icons.info_outline, "عن Flex Yemen", "v2.0.0"),
-            _buildSettingTile(Icons.description_outlined, "الشروط والأحكام", ""),
-            _buildSettingTile(Icons.contact_support_outlined, "تواصل مع الإدارة", ""),
+          _buildCategoryTitle("إعدادات الأمان المتقدمة"),
+          _buildSettingItem(Icons.lock_reset, "تغيير كلمة المرور", "آخر تغيير: منذ شهر"),
+          _buildSettingItem(Icons.phonelink_lock, "المصادقة الثنائية (2FA)", "غير مفعلة", trailing: Switch(value: false, onChanged: (v){})),
+          _buildSettingItem(Icons.devices, "الأجهزة النشطة", "جهاز واحد حالياً"),
 
-            const SizedBox(height: 30),
-            _buildLogoutButton(),
-            const SizedBox(height: 100),
-          ],
-        ),
+          _buildCategoryTitle("التفضيلات والعملة"),
+          _buildSettingItem(Icons.language, "لغة التطبيق", "العربية"),
+          _buildSettingItem(Icons.monetization_on_outlined, "العملة الأساسية", "ريال يمني - RY"),
+
+          _buildCategoryTitle("النظام والدعم"),
+          _buildSettingItem(Icons.dark_mode_outlined, "الوضع الداكن", "تلقائي"),
+          _buildSettingItem(Icons.help_outline, "مركز المساعدة", ""),
+          
+          SizedBox(height: 40),
+          _buildLogoutButton(),
+          SizedBox(height: 100),
+        ],
       ),
     );
   }
 
-  Widget _buildProfileHeader() => Container(
-    padding: const EdgeInsets.all(20),
+  Widget _buildUserCard() => Container(
+    padding: EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.05),
-      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+      gradient: LinearGradient(colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: Color(0xFFD4AF37).withOpacity(0.2)),
     ),
     child: Row(
       children: [
-        CircleAvatar(radius: 40, backgroundColor: const Color(0xFFD4AF37), child: const Icon(Icons.person, size: 40, color: Colors.black)),
-        const SizedBox(width: 20),
+        CircleAvatar(radius: 35, backgroundColor: Color(0xFFD4AF37), child: Icon(Icons.person, size: 35, color: Colors.black)),
+        SizedBox(width: 15),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("محمد المولد", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(supabase.auth.currentUser?.email ?? "flex_user@yemen.com", style: const TextStyle(color: Colors.grey)),
-            const SizedBox(height: 5),
-            Container(padding: const EdgeInsets.all(5), decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(5)), child: const Text("حساب موثق ✔", style: TextStyle(color: Colors.green, fontSize: 10))),
+            Text("محمد المولد", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(supabase.auth.currentUser?.email ?? "user@flexyemen.com", style: TextStyle(color: Colors.grey, fontSize: 12)),
           ],
-        )
+        ),
+        Spacer(),
+        Icon(Icons.qr_code, color: Color(0xFFD4AF37)),
       ],
     ),
   );
 
-  Widget _buildSectionHeader(String title) => Padding(
-    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-    child: Align(alignment: Alignment.centerRight, child: Text(title, style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold))),
+  Widget _buildCategoryTitle(String title) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+    child: Text(title, style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold, fontSize: 14)),
   );
 
-  Widget _buildSettingTile(IconData icon, String title, String value, {VoidCallback? onTap, Color? color}) => ListTile(
+  Widget _buildSettingItem(IconData icon, String title, String subtitle, {Widget? trailing}) => Card(
+    color: Colors.white.withOpacity(0.02),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    child: ListTile(
+      leading: Icon(icon, color: Colors.white70),
+      title: Text(title, style: TextStyle(fontSize: 14)),
+      subtitle: subtitle.isEmpty ? null : Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey)),
+      trailing: trailing ?? Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+    ),
+  );
+
+  Widget _buildActionCard(IconData icon, String title, String sub, Color col, VoidCallback onTap) => InkWell(
     onTap: onTap,
-    leading: Icon(icon, color: color ?? Colors.white70),
-    title: Text(title),
-    trailing: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(value, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-        const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-      ],
+    child: Container(
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(color: col.withOpacity(0.1), borderRadius: BorderRadius.circular(15), border: Border.all(color: col.withOpacity(0.3))),
+      child: Row(
+        children: [
+          Icon(icon, color: col),
+          SizedBox(width: 15),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: TextStyle(fontWeight: FontWeight.bold)), Text(sub, style: TextStyle(fontSize: 11, color: Colors.grey))])),
+          Icon(Icons.upload_file, color: col),
+        ],
+      ),
     ),
   );
 
-  Widget _buildSwitchTile(IconData icon, String title, bool value, Function(bool) onChanged) => SwitchListTile(
-    secondary: Icon(icon, color: Colors.white70),
-    title: Text(title),
-    value: value,
-    activeColor: const Color(0xFFD4AF37),
-    onChanged: onChanged,
+  Widget _buildLogoutButton() => ElevatedButton(
+    style: ElevatedButton.styleFrom(backgroundColor: Colors.red.withOpacity(0.1), foregroundColor: Colors.red, minimumSize: Size(double.infinity, 55), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+    onPressed: () => supabase.auth.signOut(),
+    child: Text("تسجيل خروج آمن"),
   );
 
-  Widget _buildLogoutButton() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.red.withOpacity(0.1), foregroundColor: Colors.red, minimumSize: const Size(double.infinity, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-      onPressed: () async => await supabase.auth.signOut(),
-      child: const Text("تسجيل الخروج"),
-    ),
-  );
-
-  void _showCurrencyPicker() {
+  void _showKYCDialog() {
     showModalBottomSheet(context: context, builder: (c) => Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(title: const Text("ريال يمني (RY)"), onTap: () { setState(() => selectedCurrency = "RY"); Navigator.pop(context); }),
-          ListTile(title: const Text("دولار أمريكي (USD)"), onTap: () { setState(() => selectedCurrency = "USD"); Navigator.pop(context); }),
-          ListTile(title: const Text("ريال سعودي (SAR)"), onTap: () { setState(() => selectedCurrency = "SAR"); Navigator.pop(context); }),
+          Text("توثيق الهوية KYC", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text("لضمان أمان عملياتك المالية والذهب، يرجى رفع صورة واضحة لبطاقتك الشخصية.", textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          SizedBox(height: 20),
+          ElevatedButton.icon(onPressed: (){}, icon: Icon(Icons.camera_alt), label: Text("التقاط صورة الهوية"), style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50))),
+          SizedBox(height: 10),
         ],
       ),
     ));
