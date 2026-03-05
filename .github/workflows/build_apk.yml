@@ -19,21 +19,23 @@ jobs:
         with:
           flutter-version: '3.22.2'
           
-      - name: Reconstruct Project Correctly
+      - name: Reconstruct Project Safely
         run: |
-          # 1. نقل ملفاتنا الحالية لمكان مؤقت
-          mkdir temp_lib
-          cp -r lib/* temp_lib/
-          cp pubspec.yaml temp_pubspec.yaml
+          # 1. الاحتفاظ بنسخة من ملفاتنا في مكان آمن خارج المجلد الحالي
+          mkdir -p ../safe_backup/lib
+          cp -r lib/* ../safe_backup/lib/
+          cp pubspec.yaml ../safe_backup/
           
-          # 2. مسح كل شيء وإنشاء مشروع فلاتر رسمي متكامل في السيرفر
-          rm -rf *
+          # 2. مسح المجلد الحالي لبناء هيكل نظيف
+          rm -rf ./* ./.??*
+          
+          # 3. إنشاء المشروع الرسمي
           flutter create . --org com.flexyemen.app --project-name flex_yemen
           
-          # 3. إعادة ملفاتنا البرمجية للمشروع الجديد
+          # 4. استعادة كود المنصة الخاص بنا
           rm -rf lib/*
-          cp -r temp_lib/* lib/
-          cp temp_pubspec.yaml pubspec.yaml
+          cp -r ../safe_backup/lib/* lib/
+          cp ../safe_backup/pubspec.yaml pubspec.yaml
           
       - name: Get Dependencies
         run: flutter pub get
