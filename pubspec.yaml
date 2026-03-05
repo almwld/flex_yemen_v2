@@ -1,16 +1,17 @@
 name: flex_yemen
-description: A new Flutter project for Flex Yemen.
-publish_to: 'none'
+description: A new Flutter project for Yemen Jewelry Market.
 version: 1.0.0+1
+publish_to: 'none'
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.2.2 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
   google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
