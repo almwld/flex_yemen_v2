@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class FlexBottomNav extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
-
   const FlexBottomNav({required this.currentIndex, required this.onTap});
 
   @override
@@ -13,20 +12,19 @@ class FlexBottomNav extends StatelessWidget {
       notchMargin: 10,
       child: Container(
         height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(children: [
-              _navBtn(Icons.home_filled, "الرئيسية", 0),
-              _navBtn(Icons.map_outlined, "الخرائط", 1),
-              _navBtn(Icons.storefront, "المتجر", 2),
+              _btn(Icons.home_filled, "الرئيسية", 0),
+              _btn(Icons.map_outlined, "الخرائط", 1),
+              _btn(Icons.storefront, "المتجر", 2),
             ]),
-            const SizedBox(width: 40), // مساحة للزر العائم
+            const SizedBox(width: 40),
             Row(children: [
-              _navBtn(Icons.wallet_outlined, "المحفظة", 4),
-              _navBtn(Icons.chat_bubble_outline, "دردشة", 5),
-              _navBtn(Icons.person_outline, "حسابي", 6),
+              _btn(Icons.wallet_outlined, "المحفظة", 4),
+              _btn(Icons.chat_bubble_outline, "دردشة", 5),
+              _btn(Icons.person_outline, "حسابي", 6),
             ]),
           ],
         ),
@@ -34,20 +32,14 @@ class FlexBottomNav extends StatelessWidget {
     );
   }
 
-  Widget _navBtn(IconData icon, String label, int index) {
-    bool isSelected = currentIndex == index;
-    return InkWell(
-      onTap: () => onTap(index),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 7),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: isSelected ? const Color(0xFFD4AF37) : Colors.grey, size: 24),
-            Text(label, style: TextStyle(color: isSelected ? const Color(0xFFD4AF37) : Colors.grey, fontSize: 8)),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget _btn(IconData i, String l, int index) => InkWell(
+    onTap: () => onTap(index),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Icon(i, color: currentIndex == index ? const Color(0xFFD4AF37) : Colors.grey, size: 22),
+        Text(l, style: TextStyle(fontSize: 8, color: currentIndex == index ? const Color(0xFFD4AF37) : Colors.grey)),
+      ]),
+    ),
+  );
 }
