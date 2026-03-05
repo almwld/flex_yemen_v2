@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           children: [
             LiveNewsTicker(),
-            Container(width: double.infinity, color: Colors.red, child: Center(child: Text("✅ تـم تـحـديـث الـمـنـصـة بـنـجـاح", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Row(
