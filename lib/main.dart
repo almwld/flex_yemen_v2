@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants.dart';
 import 'screens/home_screen.dart';
-import 'widgets/app_bar_widget.dart';
+import 'screens/store_screen.dart';
+import 'screens/settings_screen.dart';
 import 'widgets/bottom_nav_widget.dart';
 
 void main() async {
@@ -22,14 +23,30 @@ class FlexYemenApp extends StatefulWidget {
 
 class _FlexYemenAppState extends State<FlexYemenApp> {
   int _currentIndex = 0;
+  
+  final List<Widget> _pages = [
+    HomeScreen(),
+    StoreScreen(),
+    SettingsScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        primaryColor: const Color(0xFFD4AF37),
+      ),
       home: Scaffold(
-        body: IndexedStack(index: _currentIndex, children: [HomeScreen(), StoreScreen(), Center(child: Text("الإعدادات"))]),
-        bottomNavigationBar: FlexBottomNav(currentIndex: _currentIndex, onTap: (i) => setState(() => _currentIndex = i)),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
+        ),
+        bottomNavigationBar: FlexBottomNav(
+          currentIndex: _currentIndex,
+          onTap: (i) => setState(() => _currentIndex = i),
+        ),
       ),
     );
   }
