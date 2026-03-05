@@ -21,19 +21,14 @@ class FlexYemenApp extends StatefulWidget {
 }
 
 class _FlexYemenAppState extends State<FlexYemenApp> {
-  bool isDarkMode = true;
   int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Colors.black),
       home: Scaffold(
-        appBar: FlexAppBar(isDark: isDarkMode, onThemeToggle: () => setState(() => isDarkMode = !isDarkMode)),
-        body: _currentIndex == 0 ? HomeScreen() : Center(child: Text("قيد التطوير")),
+        body: IndexedStack(index: _currentIndex, children: [HomeScreen(), Center(child: Text("المتجر")), Center(child: Text("الإعدادات"))]),
         bottomNavigationBar: FlexBottomNav(currentIndex: _currentIndex, onTap: (i) => setState(() => _currentIndex = i)),
       ),
     );
